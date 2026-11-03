@@ -18,3 +18,16 @@ export function getErrorMessage(error: unknown): string {
   }
   return "Something went wrong. Please try again.";
 }
+
+/** True when the endpoint does not exist yet (features added in later phases). */
+export function isNotImplemented(error: unknown): boolean {
+  return error instanceof AxiosError && (error.response?.status === 404 || error.response?.status === 405);
+}
+
+/** Like getErrorMessage, but explains clearly when a backend feature is not built yet. */
+export function getActionErrorMessage(error: unknown, feature: string): string {
+  if (isNotImplemented(error)) {
+    return `${feature} is not available yet. The backend endpoint for it has not been built.`;
+  }
+  return getErrorMessage(error);
+}
